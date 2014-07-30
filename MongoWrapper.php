@@ -2,6 +2,8 @@
 
 /**
  * Class statically creates an instance of the mongo database.
+ * @package utils
+ * @subpackage mongodb
  */
 class MongoWrapper
 {
@@ -11,6 +13,17 @@ class MongoWrapper
 	public function __construct(){}
 	public function __clone(){}
 
+	/**
+	 * Method will instantiate the object and create a mongo client.
+	 * Return value will change depengin on the $database parameter.
+	 *
+	 *
+	 * @todo Get away from the self::$_connection->connected as this
+	 * is deprecated and throwing an error,
+	 *
+	 * @param String $database the database to auto connect to.
+	 * @return Object. Either the database object or the MongoClient object.
+	 */
 	public static function connect($database = null)
 	{
 		/*
@@ -18,7 +31,6 @@ class MongoWrapper
 		 */
 		if(!isset(self::$_instance))
 		{
-			error_log("creating mongo instance.");
 			self::$_instance = new MongoWrapper();
 		}
 
@@ -35,7 +47,8 @@ class MongoWrapper
 		 * Make sure that a connection has been established.
 		 */
 		if(!self::$_connection->connected) {
-			die("Error Connecting to DB.");
+			throw new Exception("Error Connecting to DB.");
+
 		}
 
 		/*
@@ -47,7 +60,7 @@ class MongoWrapper
 			if(isset($connectedDatabase)) {
 				return $connectedDatabase;
 			}else{
-				die("Could not connect to desired databse.");
+				throw new Exception("Could not connect to desired databse.");
 			}
 		}
 
