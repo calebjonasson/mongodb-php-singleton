@@ -2,6 +2,7 @@
 
 /**
  * Class statically creates an instance of the mongo database.
+ *
  * @package utils
  * @subpackage mongodb
  */
@@ -10,8 +11,12 @@ class MongoWrapper
 	private static $_connection;
 	private static $_instance;
 
-	public function __construct(){}
-	public function __clone(){}
+	/**
+	 * Make these magic methods private as it should be instanciated through the connect method.
+	 * Ie: MongoWrapper::connect();
+	 */
+	private function __construct(){}
+	private function __clone(){}
 
 	/**
 	 * Method will instantiate the object and create a mongo client.
@@ -48,7 +53,6 @@ class MongoWrapper
 		 */
 		if(!self::$_connection->connected) {
 			throw new Exception("Error Connecting to DB.");
-
 		}
 
 		/*
@@ -56,7 +60,7 @@ class MongoWrapper
 		 */
 		if(!empty($database) && is_string($database))
 		{
-			$connectedDatabase = self::$_connection->{$database};
+			$connectedDatabase = self::$_connection->selectDB($database);
 			if(isset($connectedDatabase)) {
 				return $connectedDatabase;
 			}else{
@@ -66,4 +70,5 @@ class MongoWrapper
 
 		return self::$_connection;
 	}
+
 }
